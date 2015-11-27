@@ -7,6 +7,43 @@ openerp.web_widget_digital_signature = function(instance) {
     instance.web.form.widgets.add('signature', 'instance.web.form.FieldSignature');
         instance.web.form.FieldSignature = instance.web.form.FieldBinaryImage.extend({
         template: 'FieldSignature',
+        show_img_field: function()
+        {
+            var val;
+            var self = this;
+            var url;
+            if(self.$el.find(".signature").hasClass( "kbw-signature" ) && ! self.$el.find(".signature").signature('isEmpty')){
+                self.$el.find(".signature").hide();
+                val = self.$el.find(".signature > canvas")[0].toDataURL();
+                images[self.name] = val.split(',')[1]
+                var $img = $(QWeb.render("FieldBinaryImage-extend", { widget: self, url: val }));
+                self.$el.find('> img').remove();
+                self.$el.prepend($img);
+                self.set('value',val.split(',')[1])
+                var id = JSON.stringify(self.view.datarecord.id || null);
+                var field = self.name;
+                url = self.session.url('/web/binary/image', {
+                    model: self.view.dataset.model,
+                    id: id,
+                    field: field,
+                    t: (new Date().getTime()),
+                });
+            }
+            else{
+                var id = JSON.stringify(self.view.datarecord.id || null);
+                var field = self.name;
+                if (self.options.preview_image)
+                    field = self.options.preview_image;
+                url = self.session.url('/web/binary/image', {
+                        model: self.view.dataset.model,
+                        id: id,
+                        field: field,
+                        t: (new Date().getTime()),
+                });
+               var $img = $(QWeb.render("FieldBinaryImage-extend", { widget: self, url: url }));
+               self.$el.find('> img').remove();
+            }
+        },
         render_value: function() {
             var self = this;
             var url;
@@ -70,37 +107,7 @@ openerp.web_widget_digital_signature = function(instance) {
                 self.$el.find(".signature").signature('clear');
             });
             $('.save_sign').click(function(){
-                var val
-                if(self.$el.find(".signature").hasClass( "kbw-signature" ) && ! self.$el.find(".signature").signature('isEmpty')){
-                    self.$el.find(".signature").hide();
-                    val = self.$el.find(".signature > canvas")[0].toDataURL();
-                    images[self.name] = val.split(',')[1]
-                    var $img = $(QWeb.render("FieldBinaryImage-extend", { widget: self, url: val }));
-                    self.$el.find('> img').remove();
-                    self.$el.prepend($img);
-                    self.set('value',val.split(',')[1])
-                    var id = JSON.stringify(self.view.datarecord.id || null);
-                    var field = self.name;
-                    url = self.session.url('/web/binary/image', {
-                        model: self.view.dataset.model,
-                        id: id,
-                        field: field,
-                        t: (new Date().getTime()),
-                    });
-                }else{
-                        var id = JSON.stringify(self.view.datarecord.id || null);
-                        var field = self.name;
-                        if (self.options.preview_image)
-                            field = self.options.preview_image;
-                        url = self.session.url('/web/binary/image', {
-                                model: self.view.dataset.model,
-                                id: id,
-                                field: field,
-                                t: (new Date().getTime()),
-                        });
-                       var $img = $(QWeb.render("FieldBinaryImage-extend", { widget: self, url: url }));
-                       self.$el.find('> img').remove();
-                }
+                this.show_img_field();
             });
             $img.load(function() {
                 if (! self.options.size)
@@ -115,20 +122,10 @@ openerp.web_widget_digital_signature = function(instance) {
                 instance.webclient.notification.warn(_t("Image"), _t("Could not display the selected image."));
             });
         },
-    });
-    instance.web.FormView.include({
-        save: function(prepend_on_create) {
-            var self = this;
-            $('.save_sign').click()
-            var save_obj = {prepend_on_create: prepend_on_create, ret: null};
-            this.save_list.push(save_obj);
-            return this._process_operations().then(function() {
-                if (save_obj.error)
-                    return $.Deferred().reject();
-                return $.when.apply($, save_obj.ret);
-            }).done(function() {
-                self.$el.removeClass('oe_form_dirty');
-            });
+        get_value: function()
+        {
+            this.show_img_field();
+            return this._super.apply(this, arguments);
         },
-    })
+    });
 }
