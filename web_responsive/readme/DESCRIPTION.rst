@@ -1,9 +1,21 @@
-This module provides a mobile compliant interface for Odoo Community web.
+This module adds responsiveness to web backend.
 
-Features:
+Features for all devices:
 
-* New navigation with an App drawer
+* New navigation with an app drawer
+* Quick menu search from the app drawer
+
+Features for mobile:
+
+* App-specific submenus are shown on full screen when toggling them from the
+  "hamburger" menu
+* View type picker dropdown displays confortably
+* Top app bar is always visible
+* Top control panel is hidden when scrolling down
+
+Features for computers:
+
 * Keyboard shortcuts for easier navigation
-* Display kanban views for small screens if an action or field One2x
-* Set chatter side (Optional per user)
-* Quick search
+* Autofocus on search menu box when opening the drawer
+* Set chatter on the side of the screen, optional per user
+* Full width form sheets
