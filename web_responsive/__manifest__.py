@@ -17,7 +17,7 @@
     ],
     "data": [
         'views/assets.xml',
-        'views/inherited_view_users_form_simple_modif.xml',
+        'views/res_users.xml',
         'views/web.xml',
     ],
     'qweb': [
