@@ -7,7 +7,9 @@ odoo.define('web_responsive', function (require) {
     var AppsMenu = require("web.AppsMenu");
     var config = require("web.config");
     var core = require("web.core");
+    var FormRenderer = require('web.FormRenderer');
     var Menu = require("web.Menu");
+    var RelationalFields = require('web.relational_fields');
 
     /**
      * Reduce menu data to a searchable format understandable by fuzzy.js
@@ -291,6 +293,73 @@ odoo.define('web_responsive', function (require) {
             ) {
                 this.$section_placeholder.collapse("hide");
             }
+        },
+
+        /**
+         * No menu brand in mobiles
+         *
+         * @override
+         */
+        _updateMenuBrand: function () {
+            if (!config.device.isMobile) {
+                return this._super.apply(this, arguments);
+            }
+        },
+    });
+
+    RelationalFields.FieldStatus.include({
+        // _renderQWebValues: function () {
+        //     return {
+        //         selections: this.status_information, // Needed to preserve order
+        //         has_folded: _.filter(this.status_information, {'selected': false}).length > 0,
+        //         clickable: !!this.attrs.clickable,
+        //     };
+        // },
+
+        // _render: function () {
+        //     // FIXME: Odoo framework creates view values & render qweb in the
+        //     //     same method. This cause a "double render" process to use
+        //     //     new custom values.
+        //     this._super.apply(this, arguments);
+        //     this.$el.html(qweb.render("FieldStatus.content", this._renderQWebValues()));
+        // }
+
+        /**
+         * Fold all on mobiles.
+         *
+         * @override
+         */
+        _setState: function () {
+            this._super.apply(this, arguments);
+            if (config.device.isMobile) {
+                _.map(this.status_information, function (value) {
+                    value.fold = true;
+                });
+            }
+        },
+    });
+
+    // Responsive view "action" buttons
+    FormRenderer.include({
+
+        /**
+         * In mobiles, put all statusbar buttons in a dropdown.
+         *
+         * @override
+         */
+        _renderHeaderButtons: function () {
+            var $buttons = this._super.apply(this, arguments);
+            if (!config.device.isMobile) {
+                return $buttons;
+            }
+
+            // $buttons must be appended by JS because all events are bound
+            $buttons.addClass("dropdown-menu");
+            var $dropdown = $(core.qweb.render(
+                'web_responsive.MenuStatusbarButtons'
+            ));
+            $buttons.addClass("dropdown-menu").appendTo($dropdown);
+            return $dropdown;
         },
     });
 });

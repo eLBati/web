@@ -262,6 +262,28 @@ html .o_web_client .o_main .o_main_content {
 
     // Form views
     .o_form_view {
+        // Statusbar buttons dropdown for mobiles
+        @include media-breakpoint-down(sm) {
+            .o_statusbar_buttons_dropdown {
+                border: {
+                    bottom: 0;
+                    radius: 0;
+                    top: 0;
+                }
+                height: 100%;
+            }
+            .o_statusbar_buttons > .btn {
+                border-radius: 0;
+                border: 0;
+                width: 100%;
+                margin-bottom: 0.2rem;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
         .o_statusbar_status {
             // Arrow from rightmost button exceeds allowed width
             .o_arrow_button:first-child::before {
