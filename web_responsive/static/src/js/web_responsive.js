@@ -10,28 +10,64 @@ odoo.define('web_responsive', function (require) {
     var Menu = require("web.Menu");
 
     /**
-     * Generate data in a searchable format understandable by fuzzy.js
+     * Reduce menu data to a searchable format understandable by fuzzy.js
      *
-     * @param {Object} menu In the format returned from ir.ui.menu.load_menus
-     * @returns {Array} It contains many sublevel; you should flatten it
+     * `AppsMenu.init()` gets `menuData` in a format similar to this (only
+     * relevant data is shown):
+     *
+     * ```js
+     * {
+     *  [...],
+     *  children: [
+     *    // This is a menu entry:
+     *    {
+     *      action: "ir.actions.client,94", // Or `false`
+     *      children: [... similar to above "children" key],
+     *      name: "Actions",
+     *      parent_id: [146, "Settings/Technical/Actions"], // Or `false`
+     *    },
+     *    ...
+     *  ]
+     * }
+     * ```
+     *
+     * This format is very hard to process to search matches, and it would
+     * slow down the search algorithm, so we reduce it with this method to be
+     * able to later implement a simpler search.
+     *
+     * @param {Object} memo
+     * Reference to current result object, passed on recursive calls.
+     *
+     * @param {Object} menu
+     * A menu entry, as described above.
+     *
+     * @returns {Object}
+     * Reduced object, without entries that have no action, and with a
+     * format like this:
+     *
+     * ```js
+     * {
+     *  "Discuss": {Menu entry Object},
+     *  "Settings": {Menu entry Object},
+     *  "Settings/Technical/Actions/Actions": {Menu entry Object},
+     *  ...
+     * }
+     * ```
      */
-    function findNames (menu) {
-        if (menu.action && !menu.children.length) {
-            var result = {}, key = menu.parent_id[1];
-            if (_.isUndefined(key)) {
-                key = "";
-            } else {
-                key += "/";
-            }
-            result[key + menu.name] = menu;
-            return result;
+    function findNames (memo, menu) {
+        if (menu.action) {
+            var key = menu.parent_id ? menu.parent_id[1] + "/" : "";
+            memo[key + menu.name] = menu;
         }
-        return menu.children.map(findNames);
+        if (menu.children.length) {
+            _.reduce(menu.children, findNames, memo);
+        }
+        return memo;
     }
 
     AppsMenu.include({
         events: _.extend({
-            "keydown .search-input": "_searchResultsNavigate",
+            "keydown .search-input input": "_searchResultsNavigate",
             "click .o-menu-search-result": "_searchResultChosen",
             "shown.bs.dropdown": "_searchFocus",
             "hidden.bs.dropdown": "_searchReset",
@@ -50,8 +86,10 @@ odoo.define('web_responsive', function (require) {
                     menuData.children[n].web_icon_data;
             }
             // Store menu data in a format searchable by fuzzy.js
-            this._searchableMenus =_.extend.apply(_,
-                _.flatten(menuData.children.map(findNames))
+            this._searchableMenus = _.reduce(
+                menuData.children,
+                findNames,
+                {}
             );
             // Search only after timeout, for fast typers
             this._search_def = $.Deferred();
@@ -62,7 +100,7 @@ odoo.define('web_responsive', function (require) {
          */
         start: function () {
             this.$search_container = this.$(".search-container");
-            this.$search_input = this.$(".search-input");
+            this.$search_input = this.$(".search-input input");
             this.$search_results = this.$(".search-results");
             return this._super.apply(this, arguments);
         },
@@ -96,6 +134,7 @@ odoo.define('web_responsive', function (require) {
          * Reset search input and results
          */
         _searchReset: function () {
+            this.$search_container.removeClass("has-results");
             this.$search_results.empty();
             this.$search_input.val("");
         },
@@ -114,14 +153,14 @@ odoo.define('web_responsive', function (require) {
          * Search among available menu items, and render that search.
          */
         _searchMenus: function () {
-            var haystack = this.$search_input.val();
-            if (haystack === "") {
+            var query = this.$search_input.val();
+            if (query === "") {
                 this.$search_container.removeClass("has-results");
                 this.$search_results.empty();
                 return;
             }
             var results = fuzzy.filter(
-                haystack,
+                query,
                 _.keys(this._searchableMenus),
                 {
                     pre: "<b>",
@@ -182,8 +221,8 @@ odoo.define('web_responsive', function (require) {
             }
             // Find current results and active element (1st by default)
             var all = this.$search_results.find(".o-menu-search-result"),
-                focused = all.filter(".active") || $(all[0]),
-                offset = all.index(focused),
+                pre_focused = all.filter(".active") || $(all[0]),
+                offset = all.index(pre_focused),
                 key = event.key;
                 // Transform tab presses in arrow presses
             if (key === "Tab") {
@@ -193,7 +232,7 @@ odoo.define('web_responsive', function (require) {
             switch (key) {
             // Pressing enter is the same as clicking on the active element
             case "Enter":
-                focused.click();
+                pre_focused.click();
                 break;
             // Navigate up or down
             case "ArrowUp":
@@ -207,9 +246,21 @@ odoo.define('web_responsive', function (require) {
                 this._searchMenusSchedule();
                 return;
             }
+            // Allow looping on results
+            if (offset < 0) {
+                offset = all.length + offset;
+            } else if (offset >= all.length) {
+                offset -= all.length;
+            }
             // Switch active element
-            focused.removeClass("active");
-            $(all[offset]).addClass("active");
+            var new_focused = $(all[offset]);
+            pre_focused.removeClass("active");
+            new_focused.addClass("active");
+            this.$search_results.scrollTo(new_focused, {
+                offset: {
+                    top: this.$search_results.height() * -0.5,
+                },
+            });
         },
     });
 

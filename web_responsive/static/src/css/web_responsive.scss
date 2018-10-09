@@ -184,6 +184,20 @@
             cursor: pointer;
             white-space: normal;
         }
+
+        // Allow to scroll only on results, keeping static search box above
+        .search-container.has-results {
+            height: 100%;
+
+            .search-input {
+                height: 3em;
+            }
+
+            .search-results {
+                height: calc(100% - 3em);
+                overflow: auto;
+            }
+        }
     }
 }
 

@@ -17,7 +17,7 @@
         <!-- Search bar -->
         <t t-jquery="[t-as=app]" t-operation="before">
             <div class="search-container form-row align-items-center mb-4 col-12">
-                <div class="col-md-10 ml-auto mr-auto mb-2">
+                <div class="search-input col-md-10 ml-auto mr-auto mb-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
@@ -26,7 +26,7 @@
                         </div>
                         <input type="search"
                                placeholder="Search menus..."
-                               class="search-input form-control"/>
+                               class="form-control"/>
                     </div>
                 </div>
                 <div class="search-results col-md-10 ml-auto mr-auto"/>
@@ -50,8 +50,9 @@
             <div t-attf-class="o-menu-search-result dropdown-item col-12 ml-auto mr-auto #{result_first ? 'active' : ''}"
                  t-att-data-menu-id="menu.id"
                  t-att-data-action-id="menu.action_id"
-                 t-att-data-parent-id="menu.parent_id[0]"
-                 t-raw="result.string"/>
+                 t-att-data-parent-id="menu.parent_id[0]">
+                <t t-raw="result.string"/>
+            </div>
         </t>
     </t>
 </template>
