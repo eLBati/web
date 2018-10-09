@@ -31,7 +31,7 @@ odoo.define('web_responsive', function (require) {
 
     AppsMenu.include({
         events: _.extend({
-            "keypress #menu_search": "_searchResultsNavigate",
+            "keydown #menu_search": "_searchResultsNavigate",
             "click .o-menu-search-result": "_searchResultChosen",
             "shown.bs.dropdown": "_searchFocus",
             "hidden.bs.dropdown": "_searchReset",
