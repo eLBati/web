@@ -190,7 +190,7 @@ odoo.define('web_responsive', function (require) {
         _searchResultChosen: function (event) {
             event.preventDefault();
             var $result = $(event.currentTarget),
-                text = $result.text(),
+                text = $result.text().trim(),
                 data = $result.data(),
                 suffix = ~text.indexOf("/") ? "/" : "";
             // Load the menu view

@@ -181,7 +181,13 @@
         }
 
         .o-menu-search-result {
+            align-items: center;
+            background-position: left;
+            background-repeat: no-repeat;
+            background-size: contain;
             cursor: pointer;
+            display: flex;
+            padding-left: 3rem;
             white-space: normal;
         }
 
