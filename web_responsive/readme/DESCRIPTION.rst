@@ -12,6 +12,8 @@ Features for mobile:
 * View type picker dropdown displays confortably
 * Top app bar is always visible
 * Top control panel is hidden when scrolling down
+* Form status bar action buttons are collapsed in a dropdown
+* Form status bar record state hides all but current state
 
 Features for computers:
 

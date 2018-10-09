@@ -233,6 +233,12 @@ html .o_web_client .o_main .o_main_content {
             }
         }
 
+        // Ellipsize long breadcrumbs
+        .breadcrumb {
+            max-width: 100%;
+            text-overflow: ellipsis;
+        }
+
         // Empty sidebar should not break layout
         .o_cp_sidebar:blank {
             display: none;
@@ -251,19 +257,51 @@ html .o_web_client .o_main .o_main_content {
                 display: flex;
                 flex-direction: row;
                 justify-content: space-around;
+                padding: 0;
+
+                .btn {
+                    border: {
+                        bottom: 0;
+                        radius: 0;
+                        top: 0;
+                    }
+                }
             }
         }
     }
 }
 
 // Normal views
-.o_content {
+.o_content, .modal-content {
     max-width: 100%;
 
     // Form views
     .o_form_view {
-        // Statusbar buttons dropdown for mobiles
+        .o_form_sheet {
+            max-width: calc(100% - 32px);
+        }
+
         @include media-breakpoint-down(sm) {
+            min-width: auto;
+
+            // Avoid overflow on forms with title and/or button box
+            .oe_button_box,
+            .oe_title,
+            {
+                max-width: 100%;
+            }
+
+            // Avoid overflow on modals
+            .o_form_sheet {
+                min-width: auto;
+            }
+
+            // Make all input groups vertical
+            .o_group_col_6 {
+                width: 100%;
+            }
+
+            // Statusbar buttons dropdown for mobiles
             .o_statusbar_buttons_dropdown {
                 border: {
                     bottom: 0;
@@ -282,29 +320,36 @@ html .o_web_client .o_main .o_main_content {
                     margin-bottom: 0;
                 }
             }
-        }
 
-        .o_statusbar_status {
-            // Arrow from rightmost button exceeds allowed width
-            .o_arrow_button:first-child::before {
-                content: none;
-                display: none;
+            .o_statusbar_status {
+                // Arrow from rightmost button exceeds allowed width
+                .o_arrow_button:first-child::before {
+                    content: none;
+                    display: none;
+                }
+            }
+
+            // Full width in form sheets
+            .o_form_sheet,
+            .oe_chatter,
+            {
+                min-width: auto;
+                max-width: 98%;
+            }
+
+            // Settings pages
+            .app_settings_block {
+                .row {
+                    margin: 0;
+                }
             }
         }
-
-        // Full width in form sheets
-        .o_form_sheet,
-        .oe_chatter,
-        {
-            max-width: 98%;
-        }
-
     }
 
     // Sided chatter, if user wants
     .o_chatter_position_sided & {
         @include media-breakpoint-up(md) {
-            .o_form_view {
+            .o_form_view:not(.o_form_nosheet) {
                 display: flex;
                 flex-flow: row nowrap;
                 height: 100%;
