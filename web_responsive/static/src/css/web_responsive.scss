@@ -127,7 +127,7 @@
 // Iconized full screen apps menu
 .o_menu_apps {
 
-    #menu_search:focus {
+    .search-input:focus {
         border-color: $o-brand-primary;
     }
 
@@ -162,6 +162,11 @@
             @include media-breakpoint-up(md) {
                 width: 16.6666666%;
             }
+        }
+
+        // Hide app icons when searching
+        .has-results ~ .o_app {
+            display: none;
         }
 
         .o-app-icon {

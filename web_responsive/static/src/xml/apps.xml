@@ -16,7 +16,7 @@
 
         <!-- Search bar -->
         <t t-jquery="[t-as=app]" t-operation="before">
-            <div class="form-row align-items-center mb-4 col-12">
+            <div class="search-container form-row align-items-center mb-4 col-12">
                 <div class="col-md-10 ml-auto mr-auto mb-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -25,12 +25,11 @@
                             </div>
                         </div>
                         <input type="search"
-                               id="menu_search"
                                placeholder="Search menus..."
-                               class="form-control"/>
+                               class="search-input form-control"/>
                     </div>
                 </div>
-                <div id="menu_results" class="col-md-10 ml-auto mr-auto"/>
+                <div class="search-results col-md-10 ml-auto mr-auto"/>
             </div>
         </t>
     </t>

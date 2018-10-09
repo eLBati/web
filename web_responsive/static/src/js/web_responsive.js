@@ -31,7 +31,7 @@ odoo.define('web_responsive', function (require) {
 
     AppsMenu.include({
         events: _.extend({
-            "keydown #menu_search": "_searchResultsNavigate",
+            "keydown .search-input": "_searchResultsNavigate",
             "click .o-menu-search-result": "_searchResultChosen",
             "shown.bs.dropdown": "_searchFocus",
             "hidden.bs.dropdown": "_searchReset",
@@ -61,8 +61,9 @@ odoo.define('web_responsive', function (require) {
          * @override
          */
         start: function () {
-            this.$menu_search = this.$("#menu_search");
-            this.$menu_results = this.$("#menu_results");
+            this.$search_container = this.$(".search-container");
+            this.$search_input = this.$(".search-input");
+            this.$search_results = this.$(".search-results");
             return this._super.apply(this, arguments);
         },
 
@@ -87,7 +88,7 @@ odoo.define('web_responsive', function (require) {
          */
         _searchFocus: function () {
             if (!config.device.isMobile) {
-                this.$menu_search.focus();
+                this.$search_input.focus();
             }
         },
 
@@ -95,8 +96,8 @@ odoo.define('web_responsive', function (require) {
          * Reset search input and results
          */
         _searchReset: function () {
-            this.$menu_results.empty();
-            this.$menu_search.val("");
+            this.$search_results.empty();
+            this.$search_input.val("");
         },
 
         /**
@@ -113,9 +114,10 @@ odoo.define('web_responsive', function (require) {
          * Search among available menu items, and render that search.
          */
         _searchMenus: function () {
-            var haystack = this.$menu_search.val();
+            var haystack = this.$search_input.val();
             if (haystack === "") {
-                this.$menu_results.empty();
+                this.$search_container.removeClass("has-results");
+                this.$search_results.empty();
                 return;
             }
             var results = fuzzy.filter(
@@ -126,7 +128,11 @@ odoo.define('web_responsive', function (require) {
                     post: "</b>",
                 }
             );
-            this.$menu_results.html(
+            this.$search_container.toggleClass(
+                "has-results",
+                Boolean(results.length)
+            );
+            this.$search_results.html(
                 core.qweb.render(
                     "web_responsive.MenuSearchResults",
                     {
@@ -169,13 +175,13 @@ odoo.define('web_responsive', function (require) {
          */
         _searchResultsNavigate: function (event) {
             // Exit soon when not navigating results
-            if (this.$menu_results.is(":empty")) {
+            if (this.$search_results.is(":empty")) {
                 // Just in case it is the 1st search
                 this._searchMenusSchedule();
                 return;
             }
             // Find current results and active element (1st by default)
-            var all = this.$menu_results.find(".o-menu-search-result"),
+            var all = this.$search_results.find(".o-menu-search-result"),
                 focused = all.filter(".active") || $(all[0]),
                 offset = all.index(focused),
                 key = event.key;
