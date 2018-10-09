@@ -56,7 +56,7 @@
             padding: 0 $o-horizontal-padding;
         }
 
-        // Cusom fullscreen layout when showing submenus
+        // Custom fullscreen layout when showing submenus
         .o_menu_sections.show {
             @include full-screen-dropdown();
             background-color: $dropdown-bg;

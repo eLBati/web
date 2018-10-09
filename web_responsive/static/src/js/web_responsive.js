@@ -10,9 +10,9 @@ odoo.define('web_responsive', function (require) {
     var Menu = require("web.Menu");
 
     /**
-     * Recursively search for menus with their full names
+     * Generate data in a searchable format understandable by fuzzy.js
      *
-     * @param {Object} menu
+     * @param {Object} menu In the format returned from ir.ui.menu.load_menus
      * @returns {Array} It contains many sublevel; you should flatten it
      */
     function findNames (menu) {
@@ -49,6 +49,7 @@ odoo.define('web_responsive', function (require) {
                 this._apps[n].web_icon_data =
                     menuData.children[n].web_icon_data;
             }
+            // Store menu data in a format searchable by fuzzy.js
             this._searchableMenus =_.extend.apply(_,
                 _.flatten(menuData.children.map(findNames))
             );
