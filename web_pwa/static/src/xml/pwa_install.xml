@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="web_pwa.systray.install">
+        <li class="o_mail_systray_item" id="pwa_install_item" hidden="1">
+            <a title="Install PWA" href="#" role="button" id="pwa_install_button">
+                <i class="fa fa-download" role="img" aria-label="Install PWA"/>
+            </a>
+        </li>
+    </t>
+</templates>
