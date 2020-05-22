@@ -37,18 +37,8 @@ class PWA(Controller):
         config_param = request.env['ir.config_parameter'].sudo()
         pwa_name = config_param.get_param("pwa.manifest.name", "Odoo PWA")
         pwa_short_name = config_param.get_param("pwa.manifest.short_name", "Odoo PWA")
-        icon128x128 = config_param.get_param(
-            "pwa.manifest.icon128x128", "/web_pwa/static/img/icons/icon-128x128.png")
-        icon144x144 = config_param.get_param(
-            "pwa.manifest.icon144x144", "/web_pwa/static/img/icons/icon-144x144.png")
-        icon152x152 = config_param.get_param(
-            "pwa.manifest.icon152x152", "/web_pwa/static/img/icons/icon-152x152.png")
-        icon192x192 = config_param.get_param(
-            "pwa.manifest.icon192x192", "/web_pwa/static/img/icons/icon-192x192.png")
-        icon256x256 = config_param.get_param(
-            "pwa.manifest.icon256x256", "/web_pwa/static/img/icons/icon-256x256.png")
-        icon512x512 = config_param.get_param(
-            "pwa.manifest.icon512x512", "/web_pwa/static/img/icons/icon-512x512.png")
+        svg_icon = config_param.get_param(
+            "pwa.manifest.svg_icon", "/web_pwa/static/img/icons/oca_logo.svg")
         background_color = config_param.get_param(
             "pwa.manifest.background_color", "#2E69B5")
         theme_color = config_param.get_param(
@@ -57,12 +47,7 @@ class PWA(Controller):
         content = qweb.render('web_pwa.manifest', {
             'pwa_name': pwa_name,
             'pwa_short_name': pwa_short_name,
-            'icon128x128': icon128x128,
-            'icon144x144': icon144x144,
-            'icon152x152': icon152x152,
-            'icon192x192': icon192x192,
-            'icon256x256': icon256x256,
-            'icon512x512': icon512x512,
+            'svg_icon': svg_icon,
             'background_color': background_color,
             'theme_color': theme_color,
         })
