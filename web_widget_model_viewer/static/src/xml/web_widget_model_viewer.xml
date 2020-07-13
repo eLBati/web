@@ -21,7 +21,10 @@
         t-att-src='url'
         t-att-border="widget.readonly ? 0 : 1"
         t-att-name="widget.name"
-        alt="3D model" auto-rotate="1" camera-controls="1">
+        alt="3D model" 
+        auto-rotate="1" 
+        camera-controls="1"
+        style="background-color: #FFFFFF;">
             <div class="text-right mt-2 mb-2 mr-2">
                 <span id="model-viewer-fullscreen" title="View fullscreen" role="img" aria-label="Fullscreen">
                     <i class="fa fa-arrows-alt fa-2x"/>
