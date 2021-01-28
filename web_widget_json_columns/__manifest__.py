@@ -1,12 +1,7 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Web Widget Json Columns",
-    "summary": """
-        This widget allows char field loaded with json values to be editable thru a grid interface.
-        """,
-    "description": """
-        This widget allows char field loaded with json values to be editable thru a grid interface.
-    """,
+    "summary": "",
+    "description": "",
     "version": "12.0.1.0",
     "author": "LevelPrime s.r.l.",
     "category": "web",
