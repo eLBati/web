@@ -38,6 +38,22 @@ odoo.define("web_pwa_oca.PWAManager", function (require) {
                 });
         },
 
+        showNotification: function () {
+            var self = this;
+            Notification.requestPermission(function(result) {
+                if (result === 'granted') {
+                    self._service_worker.ready.then(function(registration) {
+                        registration.showNotification('Vibration Sample', {
+                            body: 'Buzz! Buzz!',
+                            icon: '/web_pwa_oca/static/img/icons/icon-192x192.png',
+                            vibrate: [200, 100, 200, 100, 200, 100, 200],
+                            tag: 'vibration-sample'
+                        });
+                    });
+                }
+            });
+        },
+
         /**
          * Need register some extra API? override this!
          *
